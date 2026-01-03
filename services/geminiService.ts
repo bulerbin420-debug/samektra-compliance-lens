@@ -109,13 +109,19 @@ Return only the JSON object (no markdown).`;
 
 export const analyzeComplianceImage = async (base64Image: string): Promise<AnalysisResult> => {
   try {
+    // Debugging: Log (safely) if key is present
+    if (!process.env.API_KEY) {
+      console.error("API_KEY is missing in environment variables.");
+      throw new Error("System configuration error: API Key missing.");
+    }
+
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     
     // Clean base64 string if it contains metadata header
     const cleanBase64 = base64Image.replace(/^data:image\/(png|jpeg|jpg|webp);base64,/, '');
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-image', // Using flash-image as requested for best image performance
+      model: 'gemini-3-flash-preview',
       contents: {
         parts: [
           {
@@ -156,8 +162,39 @@ export const analyzeComplianceImage = async (base64Image: string): Promise<Analy
       throw new Error("Failed to parse compliance analysis results.");
     }
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Gemini API Error:", error);
-    throw error;
+    
+    let errorMessage = error.message || error.toString();
+
+    // Check if the error message is actually a stringified JSON object (as seen in your screenshot)
+    if (typeof errorMessage === 'string' && (errorMessage.includes('{') || errorMessage.includes('error'))) {
+       try {
+         // Attempt to extract the JSON part if mixed with text
+         const jsonMatch = errorMessage.match(/\{.*\}/s);
+         if (jsonMatch) {
+            const parsedError = JSON.parse(jsonMatch[0]);
+            if (parsedError.error && parsedError.error.message) {
+               errorMessage = parsedError.error.message;
+            }
+         }
+       } catch (e) {
+         // If parsing fails, keep original message
+       }
+    }
+
+    // Provide user-friendly messages for common codes
+    if (errorMessage.includes("429") || errorMessage.includes("quota") || errorMessage.includes("RESOURCE_EXHAUSTED")) {
+        throw new Error("Daily AI usage limit reached. Please try again later or check your API key plan.");
+    }
+    if (errorMessage.includes("403") || errorMessage.includes("API key")) {
+        throw new Error("Invalid API Key. Please check your configuration.");
+    }
+    if (errorMessage.includes("404") || errorMessage.includes("not found")) {
+        // This handles the "model not found" case specifically
+        throw new Error("AI Model unavailable. Please redeploy to ensure you are using the latest code.");
+    }
+    
+    throw new Error(errorMessage);
   }
 };
