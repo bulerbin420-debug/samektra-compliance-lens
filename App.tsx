@@ -76,12 +76,13 @@ const App: React.FC = () => {
       setHistory(updatedHistory);
 
       setState(prev => ({ ...prev, step: 'results', analysis: result }));
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       setState(prev => ({
         ...prev,
         step: 'upload',
-        error: "Analysis failed. Please try again or check your internet connection."
+        // Show specific error message from geminiService if available
+        error: error.message || "Analysis failed. Please try again or check your internet connection."
       }));
     }
   };
@@ -219,6 +220,7 @@ const App: React.FC = () => {
         {state.error && (
           <div className="max-w-md mx-auto w-full px-4 mt-4 mb-2">
             <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-red-200 text-sm text-center">
+              <p className="font-semibold mb-1">Error</p>
               {state.error}
             </div>
           </div>
