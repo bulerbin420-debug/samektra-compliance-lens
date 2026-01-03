@@ -1,5 +1,8 @@
 // Service Worker for Samektra Compliance Lens PWA
-const CACHE_NAME = 'samektra-lens-v1';
+const CACHE_NAME = 'samektra-lens-v3';
+
+// Now that we have local icons, we can add them to the cache list
+// so the app looks correct even when offline.
 const URLS_TO_CACHE = [
   '/',
   '/index.html',
@@ -15,7 +18,9 @@ self.addEventListener('install', (event) => {
       .then((cache) => {
         return cache.addAll(URLS_TO_CACHE);
       })
-      .catch((err) => console.log('Cache add failed', err))
+      .catch((err) => {
+        console.warn('Pre-caching failed:', err);
+      })
   );
   self.skipWaiting();
 });
@@ -52,7 +57,9 @@ self.addEventListener('fetch', (event) => {
         const responseToCache = response.clone();
         caches.open(CACHE_NAME)
           .then((cache) => {
-            cache.put(event.request, responseToCache);
+            if (event.request.url.startsWith('http')) {
+               cache.put(event.request, responseToCache);
+            }
           });
         return response;
       })
