@@ -1,19 +1,20 @@
 // Service Worker for Samektra Compliance Lens PWA
 // Notes:
-// - CORE_ASSETS must exist or install will fail.
+// - CORE_ASSETS are required for the app shell.
 // - OPTIONAL_ASSETS are best-effort so missing files won't block install.
 
 const CACHE_NAME = 'samektra-lens-v7';
 
 const CORE_ASSETS = [
-  '/',              // app shell
-  '/index.html',
+  '/',              // app shell (index.html)
   '/manifest.json',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
 ];
 
 const OPTIONAL_ASSETS = [
+  '/?source=pwa',
+  '/index.html',
   // Screenshots are optional (PWABuilder uses them for store listing)
   '/screenshots/home-narrow.png',
   '/screenshots/history-narrow.png',
@@ -68,7 +69,12 @@ self.addEventListener('fetch', (event) => {
         cache.put(event.request, fresh.clone());
         return fresh;
       } catch {
-        return (await caches.match(event.request)) || (await caches.match('/index.html')) || Response.error();
+        return (
+          (await caches.match(event.request)) ||
+          (await caches.match('/index.html', { ignoreSearch: true })) ||
+          (await caches.match('/', { ignoreSearch: true })) ||
+          Response.error()
+        );
       }
     })());
     return;
