@@ -1,13 +1,12 @@
-// Service Worker for Samektra Compliance Lens PWA
-const CACHE_NAME = 'samektra-lens-v6';
+const CACHE_NAME = 'samektra-lens-v7'; // bump version when you change SW
 
-// STRICT CACHE: These files MUST exist for the app to install.
 const PRECACHE_URLS = [
-  '/',
+  '/',                 // your app shell
   '/manifest.json',
   '/icons/icon-192.png',
   '/icons/icon-512.png'
 ];
+
 
 // Install event
 self.addEventListener('install', (event) => {
