@@ -16,14 +16,9 @@ root.render(
 );
 
 // Register Service Worker for PWA support
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then((registration) => {
-        console.log('SW registered: ', registration);
-      })
-      .catch((registrationError) => {
-        console.log('SW registration failed: ', registrationError);
-      });
-  });
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker
+    .register("/service-worker.js", { scope: "/" })
+    .then((reg) => console.log("SW registered:", reg.scope))
+    .catch((err) => console.warn("SW registration failed:", err));
 }
