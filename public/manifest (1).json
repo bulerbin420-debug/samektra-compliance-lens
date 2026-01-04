@@ -1,0 +1,80 @@
+{
+  "id": "/",
+  "short_name": "Compliance Lens",
+  "name": "Samektra Compliance Lens",
+  "description": "AI-powered compliance inspection tool for NFPA, IBC, NEC, and more.",
+  "icons": [
+    {
+      "src": "https://placehold.co/192x192/0f172a/38bdf8.png?text=CL",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "https://placehold.co/192x192/0f172a/38bdf8.png?text=CL",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "https://placehold.co/512x512/0f172a/38bdf8.png?text=Samektra",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "https://placehold.co/512x512/0f172a/38bdf8.png?text=Samektra",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://placehold.co/1080x1920/0f172a/38bdf8.png?text=Home+Dashboard",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Home Dashboard"
+    },
+    {
+      "src": "https://placehold.co/1080x1920/0f172a/38bdf8.png?text=AI+Analysis",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "AI Analysis Results"
+    },
+    {
+      "src": "https://placehold.co/1080x1920/0f172a/38bdf8.png?text=Scan+History",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "History View"
+    },
+    {
+      "src": "https://placehold.co/1920x1080/0f172a/38bdf8.png?text=Desktop+View",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Desktop View"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Inspection",
+      "short_name": "Inspect",
+      "description": "Start a new compliance scan",
+      "url": "/?action=upload",
+      "icons": [{ "src": "https://placehold.co/192x192/0f172a/38bdf8.png?text=Scan", "sizes": "192x192", "type": "image/png" }]
+    }
+  ],
+  "start_url": "/?source=pwa",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0f172a",
+  "background_color": "#0f172a",
+  "scope": "/",
+  "prefer_related_applications": false,
+  "categories": ["productivity", "utilities", "business"],
+  "lang": "en"
+}
