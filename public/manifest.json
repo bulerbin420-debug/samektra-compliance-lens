@@ -1,4 +1,5 @@
 {
+  "id": "/samektra-compliance-lens",
   "name": "Samektra Compliance Lens",
   "short_name": "Compliance Lens",
   "description": "AI-powered compliance inspection tool for NFPA, IBC, NEC, and more.",
