@@ -23,7 +23,29 @@
       "purpose": "any maskable"
     }
   ],
-
+"screenshots": [
+  {
+    "src": "/screenshots/home-narrow.png",
+    "sizes": "1080x1920",
+    "type": "image/png",
+    "form_factor": "narrow",
+    "label": "Home"
+  },
+  {
+    "src": "/screenshots/history-narrow.png",
+    "sizes": "1080x1920",
+    "type": "image/png",
+    "form_factor": "narrow",
+    "label": "History"
+  },
+  {
+    "src": "/screenshots/desktop-wide.png",
+    "sizes": "1920x1080",
+    "type": "image/png",
+    "form_factor": "wide",
+    "label": "Desktop view"
+  }
+],
   "shortcuts": [
     {
       "name": "New Inspection",
