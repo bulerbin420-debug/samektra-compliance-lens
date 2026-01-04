@@ -1,31 +1,28 @@
 // Service Worker for Samektra Compliance Lens PWA
-const CACHE_NAME = 'samektra-lens-v3';
+const CACHE_NAME = 'samektra-lens-v5';
 
-// Now that we have local icons, we can add them to the cache list
-// so the app looks correct even when offline.
-const URLS_TO_CACHE = [
+// STRICT CACHE: These files MUST exist for the app to install.
+const PRECACHE_URLS = [
   '/',
   '/index.html',
-  '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png'
+  '/manifest.json'
 ];
 
-// Install event - cache core assets
+// Install event
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        return cache.addAll(URLS_TO_CACHE);
+        return cache.addAll(PRECACHE_URLS);
       })
       .catch((err) => {
-        console.warn('Pre-caching failed:', err);
+        console.warn('SW Install: Pre-caching failed', err);
       })
   );
   self.skipWaiting();
 });
 
-// Activate event - clean up old caches
+// Activate event
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -41,26 +38,32 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch event - Network first, fall back to cache
+// Fetch event
 self.addEventListener('fetch', (event) => {
-  // Skip cross-origin requests
-  if (!event.request.url.startsWith(self.location.origin)) {
-    return;
-  }
+  // Handle cross-origin requests (like our placeholder icons) separately
+  // to avoid opaque response issues in strict cache logic, though simple caching usually works.
+  
+  if (event.request.method !== 'GET') return;
 
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        if (!response || response.status !== 200 || response.type !== 'basic') {
+        // Valid response?
+        if (!response || response.status !== 200 || response.type === 'error') {
           return response;
         }
+
+        // Clone response to cache
         const responseToCache = response.clone();
+
         caches.open(CACHE_NAME)
           .then((cache) => {
+            // Only cache http/https
             if (event.request.url.startsWith('http')) {
                cache.put(event.request, responseToCache);
             }
           });
+
         return response;
       })
       .catch(() => {
