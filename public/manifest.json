@@ -3,14 +3,12 @@
   "name": "Samektra Compliance Lens",
   "short_name": "Compliance Lens",
   "description": "AI-powered compliance inspection tool for NFPA, IBC, NEC, and more.",
-
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#0f172a",
   "background_color": "#0f172a",
-
   "icons": [
     {
       "src": "/icons/icon-192.png",
