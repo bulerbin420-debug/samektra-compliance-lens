@@ -1,5 +1,5 @@
 // Service Worker for Samektra Compliance Lens PWA
-const CACHE_NAME = 'samektra-lens-v5';
+const CACHE_NAME = 'samektra-lens-v6';
 
 // STRICT CACHE: These files MUST exist for the app to install.
 const PRECACHE_URLS = [
@@ -40,9 +40,7 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event
 self.addEventListener('fetch', (event) => {
-  // Handle cross-origin requests (like our placeholder icons) separately
-  // to avoid opaque response issues in strict cache logic, though simple caching usually works.
-  
+  // Skip non-GET or cross-origin requests unless they are our own assets
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
@@ -67,6 +65,7 @@ self.addEventListener('fetch', (event) => {
         return response;
       })
       .catch(() => {
+        // Network failed, try cache
         return caches.match(event.request);
       })
   );
