@@ -1,12 +1,11 @@
 {
-  "id": "/",
-  "short_name": "Compliance Lens",
   "name": "Samektra Compliance Lens",
   "short_name": "Compliance Lens",
   "description": "AI-powered compliance inspection tool for NFPA, IBC, NEC, and more.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "theme_color": "#0f172a",
   "background_color": "#0f172a",
   "icons": [
@@ -35,51 +34,17 @@
       "purpose": "maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "https://via.placeholder.com/1080x1920.png?text=Home+Dashboard",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Home Dashboard"
-    },
-    {
-      "src": "https://via.placeholder.com/1080x1920.png?text=Inspection+Analysis",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "AI Analysis Results"
-    },
-    {
-      "src": "https://via.placeholder.com/1080x1920.png?text=Inspection+History",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "History View"
-    },
-    {
-      "src": "https://via.placeholder.com/1920x1080.png?text=Desktop+Compliance+View",
-      "sizes": "1920x1080",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Desktop View"
-    }
-  ],
   "shortcuts": [
     {
       "name": "New Inspection",
       "short_name": "Inspect",
       "description": "Start a new compliance scan",
       "url": "/?action=upload",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+      "icons": [
+        { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }
+      ]
     }
   ],
-  "start_url": "/?source=pwa",
-  "display": "standalone",
-  "orientation": "portrait",
-  "theme_color": "#0f172a",
-  "background_color": "#0f172a",
-  "scope": "/",
   "prefer_related_applications": false,
   "categories": ["productivity", "utilities", "business"],
   "lang": "en"
