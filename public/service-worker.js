@@ -1,10 +1,13 @@
-const CACHE_NAME = 'samektra-lens-v7'; // bump version when you change SW
+const CACHE_NAME = 'samektra-lens-v8'; // bump version when you change SW
 
 const PRECACHE_URLS = [
-  '/',                 // your app shell
+  '/',                 // SPA entry
   '/manifest.json',
   '/icons/icon-192.png',
-  '/icons/icon-512.png'
+  '/icons/icon-512.png',
+  '/screenshots/home-narrow.png',
+  '/screenshots/history-narrow.png',
+  '/screenshots/desktop-wide.png',
 ];
 
 
@@ -13,7 +16,9 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => cache.addAll(PRECACHE_URLS))
-      .catch((err) => console.warn('SW Install: Pre-caching failed', err))
+      .catch((err) => {
+        console.warn('SW Install: pre-cache failed (continuing anyway)', err);
+      })
   );
   self.skipWaiting();
 });
