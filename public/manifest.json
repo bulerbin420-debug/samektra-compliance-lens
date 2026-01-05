@@ -6,9 +6,7 @@
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui", "browser"],
   "orientation": "portrait",
-  "dir": "ltr",
   "theme_color": "#0f172a",
   "background_color": "#0f172a",
   "icons": [
@@ -25,63 +23,40 @@
       "purpose": "any maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "/screenshots/home-narrow.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Home"
-    },
-    {
-      "src": "/screenshots/history-narrow.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "History"
-    },
-    {
-      "src": "/screenshots/desktop-wide.png",
-      "sizes": "1920x1080",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Desktop view"
-    }
-  ],
+"screenshots": [
+  {
+    "src": "/screenshots/home-narrow.png",
+    "sizes": "1080x1920",
+    "type": "image/png",
+    "form_factor": "narrow",
+    "label": "Home"
+  },
+  {
+    "src": "/screenshots/history-narrow.png",
+    "sizes": "1080x1920",
+    "type": "image/png",
+    "form_factor": "narrow",
+    "label": "History"
+  },
+  {
+    "src": "/screenshots/desktop-wide.png",
+    "sizes": "1920x1080",
+    "type": "image/png",
+    "form_factor": "wide",
+    "label": "Desktop view"
+  }
+],
   "shortcuts": [
     {
       "name": "New Inspection",
       "short_name": "Inspect",
       "description": "Start a new compliance scan",
       "url": "/?action=upload",
-      "icons": [
-        {
-          "src": "/icons/icon-192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     }
   ],
+
   "prefer_related_applications": false,
-  "categories": [
-    "productivity",
-    "utilities",
-    "business"
-  ],
-  "lang": "en",
-  "launch_handler": { "client_mode": "navigate-existing" },
-  "share_target": {
-    "action": "/?share-target=1",
-    "method": "GET",
-    "enctype": "application/x-www-form-urlencoded",
-    "params": {
-      "title": "title",
-      "text": "text",
-      "url": "url"
-    }
-  },
-  "protocol_handlers": [
-    { "protocol": "web+samektra", "url": "/?protocol=%s" }
-  ]
+  "categories": ["productivity", "utilities", "business"],
+  "lang": "en"
 }

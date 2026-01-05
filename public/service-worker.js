@@ -1,60 +1,43 @@
-// Service Worker for Samektra Compliance Lens PWA
-// Notes:
-// - CORE_ASSETS must exist or install will fail.
-// - OPTIONAL_ASSETS are best-effort so missing files won't block install.
+const CACHE_NAME = 'samektra-lens-v8'; // bump version when you change SW
 
-const CACHE_NAME = 'samektra-lens-v7';
-
-const CORE_ASSETS = [
-  '/',              // app shell
-  '/index.html',
+const PRECACHE_URLS = [
+  '/',                 // SPA entry
   '/manifest.json',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
-];
-
-const OPTIONAL_ASSETS = [
-  // Screenshots are optional (PWABuilder uses them for store listing)
   '/screenshots/home-narrow.png',
   '/screenshots/history-narrow.png',
   '/screenshots/desktop-wide.png',
+  '/sw.js',
 ];
 
-// Install: pre-cache core assets, best-effort cache optional assets
+
+// Install event
 self.addEventListener('install', (event) => {
-  event.waitUntil((async () => {
-    const cache = await caches.open(CACHE_NAME);
-
-    // CORE assets: best-effort.
-    // If any URL in addAll() 404s, the entire install fails and the SW never
-    // activates (PWABuilder/Lighthouse then report "no service worker").
-    // So we try addAll(), but fall back to individual caching.
-    try {
-      await cache.addAll(CORE_ASSETS);
-    } catch (err) {
-      console.warn('[SW] CORE precache failed, falling back to individual caching:', err);
-      await Promise.allSettled(CORE_ASSETS.map((url) => cache.add(url)));
-    }
-
-    // OPTIONAL assets: don't block installation if missing
-    await Promise.allSettled(
-      OPTIONAL_ASSETS.map((url) => cache.add(url))
-    );
-
-    self.skipWaiting();
-  })());
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(PRECACHE_URLS))
+      .catch((err) => {
+        console.warn('SW Install: pre-cache failed (continuing anyway)', err);
+      })
+  );
+  self.skipWaiting();
 });
 
-// Activate: clean old caches and take control immediately
+// Activate event
 self.addEventListener('activate', (event) => {
-  event.waitUntil((async () => {
-    const keys = await caches.keys();
-    await Promise.all(keys.map((key) => (key !== CACHE_NAME ? caches.delete(key) : Promise.resolve())));
-    await self.clients.claim();
-  })());
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) return caches.delete(cacheName);
+        })
+      );
+    })
+  );
+  self.clients.claim();
 });
 
-// Fetch: network-first for navigation/HTML, cache-first for same-origin GETs
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
@@ -63,33 +46,42 @@ self.addEventListener('fetch', (event) => {
   // Only handle same-origin requests
   if (url.origin !== self.location.origin) return;
 
-  // For navigations (SPA routes), try network then fallback to cached app shell
-  const isNavigation =
-    event.request.mode === 'navigate' ||
-    (event.request.headers.get('accept') || '').includes('text/html');
-
-  if (isNavigation) {
-    event.respondWith((async () => {
-      try {
-        const fresh = await fetch(event.request);
-        const cache = await caches.open(CACHE_NAME);
-        cache.put(event.request, fresh.clone());
-        return fresh;
-      } catch {
-        return (await caches.match(event.request)) || (await caches.match('/index.html')) || Response.error();
-      }
-    })());
+  // SPA navigation fallback (important for offline + refresh on routes)
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          // Update cached app shell
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put('/', copy));
+          return response;
+        })
+        .catch(() => caches.match('/'))
+    );
     return;
   }
 
-  // For other requests: cache-first, then network
-  event.respondWith((async () => {
-    const cached = await caches.match(event.request);
-    if (cached) return cached;
+  // Cache-first for static assets; network update in background
+  const isStaticAsset =
+    url.pathname.startsWith('/assets/') ||
+    url.pathname.startsWith('/icons/') ||
+    url.pathname === '/manifest.json';
 
-    const fresh = await fetch(event.request);
-    const cache = await caches.open(CACHE_NAME);
-    cache.put(event.request, fresh.clone());
-    return fresh;
-  })());
+  if (!isStaticAsset) return;
+
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      const networkFetch = fetch(event.request)
+        .then((response) => {
+          if (response && response.status === 200) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
+          return response;
+        })
+        .catch(() => cached);
+
+      return cached || networkFetch;
+    })
+  );
 });

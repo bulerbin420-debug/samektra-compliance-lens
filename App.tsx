@@ -116,16 +116,6 @@ const App: React.FC = () => {
     setActiveTab('upload');
   };
 
-  const handleClearHistory = async () => {
-    await clearHistory();
-    setHistory([]);
-    // If user is currently viewing a report that came from history, reset back
-    // to the upload step to avoid showing stale data.
-    if (activeTab === 'history') {
-      setState(prev => ({ ...prev, step: 'upload', analysis: null, image: null }));
-    }
-  };
-
   // Helper to render content based on active tab
   const renderContent = () => {
     if (activeTab === 'home') {
@@ -142,11 +132,19 @@ const App: React.FC = () => {
 
     if (activeTab === 'history') {
       return (
-        <HistoryView 
+        <HistoryView
+            onClearHistory={async () => {
+              try {
+                await clearHistory();
+                setHistory([]);
+              } catch (err) {
+                console.error('Failed to clear history', err);
+              }
+            }}
+ 
           history={history}
           onSelect={handleSelectHistoryItem}
           onNavigate={handleTabClick}
-          onClearHistory={handleClearHistory}
         />
       );
     }
@@ -283,5 +281,18 @@ const App: React.FC = () => {
     </div>
   );
 };
+
+  const handleClearHistory = async () => {
+    const pw = window.prompt('Enter password to reset history:');
+    if (pw !== '13041978') {
+      if (pw !== null) alert('Incorrect password.');
+      return;
+    }
+    await clearHistory();
+    setHistory([]);
+    setSelectedHistoryItem(null);
+    setActiveTab('upload');
+  };
+
 
 export default App;

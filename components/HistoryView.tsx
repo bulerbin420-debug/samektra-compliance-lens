@@ -30,25 +30,24 @@ const HistoryView: React.FC<HistoryViewProps> = ({ history, onSelect, onNavigate
     );
   }
 
-  const handleResetClick = () => {
-    const password = window.prompt('Enter password to reset history:');
-    if (password !== '13041978') {
-      window.alert('Incorrect password. History was not cleared.');
-      return;
-    }
-    const ok = window.confirm('This will permanently delete all inspection history on this device. Continue?');
-    if (!ok) return;
-    onClearHistory();
-  };
-
   return (
     <div className="flex-1 px-4 py-6 animate-fade-in pb-24">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 gap-3">
         <h2 className="text-2xl font-bold text-white">Inspection History</h2>
         <button
-          onClick={handleResetClick}
-          className="px-3 py-2 text-xs font-semibold rounded-lg border border-slate-600 text-slate-200 hover:bg-slate-800 transition-colors"
-          title="Reset history (password required)"
+          type="button"
+          onClick={() => {
+            const pwd = window.prompt("Enter admin password to reset history:");
+            if (pwd !== "13041978") {
+              if (pwd !== null) alert("Incorrect password.");
+              return;
+            }
+            const ok = window.confirm("This will permanently clear all local inspection history on this device. Continue?");
+            if (!ok) return;
+            onClearHistory();
+          }}
+          className="px-3 py-2 rounded-lg text-sm font-medium bg-white/10 hover:bg-white/15 border border-white/10"
+          title="Clear all saved inspection history on this device"
         >
           Reset History
         </button>
