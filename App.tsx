@@ -104,6 +104,18 @@ const App: React.FC = () => {
     setActiveTab(tab);
   };
 
+const handleClearHistory = async () => {
+  try {
+    await clearHistory();
+  } catch (err) {
+    console.error('Failed to clear history', err);
+  } finally {
+    setHistory([]);
+    setSelectedHistoryItem(null);
+  }
+};
+
+
   // Used by HistoryView and HomeView to open a past report
   const handleSelectHistoryItem = (item: HistoryItem) => {
     setState({
@@ -133,15 +145,7 @@ const App: React.FC = () => {
     if (activeTab === 'history') {
       return (
         <HistoryView
-            onClearHistory={async () => {
-              try {
-                await clearHistory();
-                setHistory([]);
-              } catch (err) {
-                console.error('Failed to clear history', err);
-              }
-            }}
- 
+            onClearHistory={handleClearHistory}
           history={history}
           onSelect={handleSelectHistoryItem}
           onNavigate={handleTabClick}
@@ -281,18 +285,4 @@ const App: React.FC = () => {
     </div>
   );
 };
-
-  const handleClearHistory = async () => {
-    const pw = window.prompt('Enter password to reset history:');
-    if (pw !== '13041978') {
-      if (pw !== null) alert('Incorrect password.');
-      return;
-    }
-    await clearHistory();
-    setHistory([]);
-    setSelectedHistoryItem(null);
-    setActiveTab('upload');
-  };
-
-
 export default App;

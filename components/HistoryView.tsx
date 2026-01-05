@@ -31,8 +31,9 @@ const HistoryView: React.FC<HistoryViewProps> = ({ history, onSelect, onNavigate
   }
 
   return (
-    <div className="flex-1 px-4 py-6 animate-fade-in pb-24">
-      <div className="flex items-center justify-between mb-6 gap-3">
+    <div className="flex-1 flex flex-col px-4 py-4 animate-fade-in pb-24">
+      <div className="sticky top-0 z-10 -mx-4 px-4 py-3 mb-4 bg-slate-900/90 backdrop-blur border-b border-white/10">
+        <div className="flex items-center justify-between gap-3">
         <h2 className="text-2xl font-bold text-white">Inspection History</h2>
         <button
           type="button"
@@ -51,9 +52,10 @@ const HistoryView: React.FC<HistoryViewProps> = ({ history, onSelect, onNavigate
         >
           Reset History
         </button>
+        </div>
       </div>
-      
-      <div className="space-y-4">
+
+      <div className="flex-1 overflow-y-auto space-y-4">
         {history.map((item) => {
           const hasViolations = item.result.violations.length > 0;
           const date = new Date(item.timestamp);

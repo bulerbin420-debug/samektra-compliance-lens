@@ -15,14 +15,20 @@ root.render(
   </React.StrictMode>
 );
 
-
-
 // Register Service Worker for PWA support
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register('/sw.js', { scope: '/' })
-      .then((reg) => console.log('SW registered:', reg.scope))
-      .catch((err) => console.warn('SW registration failed:', err));
+    try {
+      const basePath = new URL(import.meta.env.BASE_URL, window.location.href).pathname;
+      const scope = basePath.endsWith('/') ? basePath : `${basePath}/`;
+      const swUrl = `${scope}sw.js`;
+      navigator.serviceWorker
+        .register(swUrl, { scope })
+        .then((reg) => console.log('SW registered:', reg.scope))
+        .catch((err) => console.warn('SW registration failed:', err));
+    } catch (err) {
+      console.warn('SW registration failed (URL resolution):', err);
+    }
   });
 }
+

@@ -1,16 +1,20 @@
-const CACHE_NAME = 'samektra-lens-v8'; // bump version when you change SW
+const CACHE_NAME = 'samektra-lens-v9'; // bump version when you change SW
+
+// Make SW work from site root OR a subfolder (GitHub Pages / PWABuilder / TWA)
+const SCOPE_URL = (self.registration && self.registration.scope) ? self.registration.scope : self.location.origin + '/';
+const BASE_PATH = new URL(SCOPE_URL).pathname; // always starts with '/'
+const scopePath = BASE_PATH.endsWith('/') ? BASE_PATH : `${BASE_PATH}/`;
 
 const PRECACHE_URLS = [
-  '/',                 // SPA entry
-  '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/screenshots/home-narrow.png',
-  '/screenshots/history-narrow.png',
-  '/screenshots/desktop-wide.png',
-  '/sw.js',
+  scopePath, // SPA entry (app shell)
+  `${scopePath}manifest.json`,
+  `${scopePath}icons/icon-192.png`,
+  `${scopePath}icons/icon-512.png`,
+  `${scopePath}screenshots/home-narrow.png`,
+  `${scopePath}screenshots/history-narrow.png`,
+  `${scopePath}screenshots/desktop-wide.png`,
+  `${scopePath}sw.js`,
 ];
-
 
 // Install event
 self.addEventListener('install', (event) => {
@@ -31,6 +35,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) return caches.delete(cacheName);
+          return Promise.resolve(false);
         })
       );
     })
@@ -53,19 +58,20 @@ self.addEventListener('fetch', (event) => {
         .then((response) => {
           // Update cached app shell
           const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put('/', copy));
+          caches.open(CACHE_NAME).then((cache) => cache.put(scopePath, copy));
           return response;
         })
-        .catch(() => caches.match('/'))
+        .catch(() => caches.match(scopePath))
     );
     return;
   }
 
   // Cache-first for static assets; network update in background
   const isStaticAsset =
-    url.pathname.startsWith('/assets/') ||
-    url.pathname.startsWith('/icons/') ||
-    url.pathname === '/manifest.json';
+    url.pathname.startsWith(`${scopePath}assets/`) ||
+    url.pathname.startsWith(`${scopePath}icons/`) ||
+    url.pathname.startsWith(`${scopePath}screenshots/`) ||
+    url.pathname === `${scopePath}manifest.json`;
 
   if (!isStaticAsset) return;
 
