@@ -212,6 +212,9 @@ export const CODE_INSIGHTS: CodeInsight[] = [
   }
 ];
 
+// Convenience export for UI logic (e.g., cycling)
+export const CODE_INSIGHTS_COUNT = CODE_INSIGHTS.length;
+
 export function getDateKey(d: Date = new Date()): string {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');

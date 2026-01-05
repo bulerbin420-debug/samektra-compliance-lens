@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ChevronRight, CheckCircle2 } from 'lucide-react';
-import { getDateKey, getInsightFor } from '../services/codeInsightService';
+import { CODE_INSIGHTS_COUNT, getDateKey, getInsightFor } from '../services/codeInsightService';
 
 const STORAGE_KEY = 'samektra_codeInsight_v1';
 
@@ -28,32 +28,53 @@ const DailyCodeInsightCard: React.FC = () => {
 
   // Load stored offset for *today* (so "Next" persists through refresh, but resets daily)
   useEffect(() => {
-    const stored = safeParse(localStorage.getItem(STORAGE_KEY));
+    let stored: StoredState | null = null;
+    try {
+      stored = safeParse(localStorage.getItem(STORAGE_KEY));
+    } catch {
+      stored = null;
+    }
     if (stored && stored.dateKey === todayKey) {
       setOffset(Math.max(0, Math.floor(stored.offset)));
       return;
     }
     // reset for a new day
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ dateKey: todayKey, offset: 0 } satisfies StoredState));
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ dateKey: todayKey, offset: 0 } satisfies StoredState)
+      );
+    } catch {
+      // ignore storage failures (some webviews block it)
+    }
     setOffset(0);
   }, [todayKey]);
 
   // Persist on change
   useEffect(() => {
     const next: StoredState = { dateKey: todayKey, offset };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      // ignore
+    }
   }, [todayKey, offset]);
 
-  const { insight } = useMemo(() => getInsightFor(todayKey, offset), [todayKey, offset]);
+  const { insight, index } = useMemo(() => getInsightFor(todayKey, offset), [todayKey, offset]);
 
-  const handleNext = () => setOffset((v) => v + 1);
+  const handleNext = (e?: React.MouseEvent) => {
+    // Defensive: ensure no parent click handler ever steals focus/tap.
+    if (e) e.stopPropagation();
+    setOffset((v) => (v + 1) % Math.max(1, CODE_INSIGHTS_COUNT));
+  };
 
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 relative overflow-hidden">
-      <div className="absolute -right-4 -top-4 bg-teal-500/10 h-24 w-24 rounded-full blur-xl"></div>
+      {/* Decorative glow (never capture clicks) */}
+      <div className="pointer-events-none absolute -right-4 -top-4 bg-teal-500/10 h-24 w-24 rounded-full blur-xl z-0"></div>
 
-      <div className="flex items-start justify-between gap-3">
-        <div>
+      <div className="relative z-10 flex items-start justify-between gap-3">
+        <div className="min-w-0">
           <h4 className="text-teal-400 text-xs font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
             <CheckCircle2 className="h-3.5 w-3.5" />
             Daily Code Insight
@@ -65,6 +86,9 @@ const DailyCodeInsightCard: React.FC = () => {
           </div>
           <div className="text-[11px] text-slate-500 mt-0.5">
             Reference: <span className="text-slate-400">{insight.reference}</span>
+          </div>
+          <div className="text-[10px] text-slate-600 mt-1">
+            #{index + 1} of {CODE_INSIGHTS_COUNT}
           </div>
         </div>
 
