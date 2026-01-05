@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
-import { Play, TrendingUp, AlertTriangle, FileText, CheckCircle2, ChevronRight, Clock, Download } from 'lucide-react';
+import { Play, TrendingUp, AlertTriangle, FileText, ChevronRight, Clock, Download } from 'lucide-react';
 import { HistoryItem } from '../types';
+import DailyCodeInsightCard from './DailyCodeInsightCard';
 
 interface HomeViewProps {
   onNavigate: (tab: string) => void;
@@ -107,16 +108,7 @@ const HomeView: React.FC<HomeViewProps> = ({ onNavigate, history, onSelectHistor
       </button>
 
       {/* Daily Insight / Tip */}
-      <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 relative overflow-hidden">
-         <div className="absolute -right-4 -top-4 bg-teal-500/10 h-24 w-24 rounded-full blur-xl"></div>
-         <h4 className="text-teal-400 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5">
-            <CheckCircle2 className="h-3.5 w-3.5" />
-            Daily Code Insight
-         </h4>
-         <p className="text-slate-300 text-sm leading-relaxed">
-            <span className="font-semibold text-white">NFPA 101, 7.9.2.1:</span> Emergency illumination must be provided for a minimum of 1.5 hours in the event of failure of normal lighting.
-         </p>
-      </div>
+      <DailyCodeInsightCard />
 
       {/* Recent Activity */}
       <div>

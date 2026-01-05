@@ -1,4 +1,4 @@
-const CACHE_NAME = 'samektra-lens-v9'; // bump version when you change SW
+const CACHE_NAME = 'samektra-lens-v10'; // bump version when you change SW
 
 // Make SW work from site root OR a subfolder (GitHub Pages / PWABuilder / TWA)
 const SCOPE_URL = (self.registration && self.registration.scope) ? self.registration.scope : self.location.origin + '/';
@@ -10,6 +10,8 @@ const PRECACHE_URLS = [
   `${scopePath}manifest.json`,
   `${scopePath}icons/icon-192.png`,
   `${scopePath}icons/icon-512.png`,
+  `${scopePath}icons/icon-192-maskable.png`,
+  `${scopePath}icons/icon-512-maskable.png`,
   `${scopePath}screenshots/home-narrow.png`,
   `${scopePath}screenshots/history-narrow.png`,
   `${scopePath}screenshots/desktop-wide.png`,
