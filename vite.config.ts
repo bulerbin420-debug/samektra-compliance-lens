@@ -6,7 +6,9 @@ export default defineConfig(({ mode }) => {
   // Fix: Cast process to any to avoid TypeScript error regarding missing cwd() in Process type definition
   const env = loadEnv(mode, (process as any).cwd(), '');
   return {
-    base: './',
+    // Vercel serves from the domain root. Using '/' avoids edge-case URL
+    // resolution issues in some PWA tooling (e.g., PWABuilder).
+    base: '/',
     plugins: [react()],
     define: {
       // This ensures process.env.API_KEY works in your code even in the browser

@@ -1,2 +1,2 @@
 /* PWA Builder compatibility shim */
-importScripts('./service-worker.js');
+importScripts('/service-worker.js');
