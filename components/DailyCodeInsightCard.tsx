@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ChevronRight, CheckCircle2 } from 'lucide-react';
+import { ChevronRight, FileText } from 'lucide-react';
 import { CODE_INSIGHTS_COUNT, getDateKey, getInsightFor } from '../services/codeInsightService';
 
-const STORAGE_KEY = 'samektra_codeInsight_v1';
+const STORAGE_KEY = 'samektra_codeInsight_v2';
 
 type StoredState = {
   dateKey: string;
@@ -26,7 +26,7 @@ const DailyCodeInsightCard: React.FC = () => {
   const todayKey = useMemo(() => getDateKey(new Date()), []);
   const [offset, setOffset] = useState<number>(0);
 
-  // Load stored offset for *today* (so "Next" persists through refresh, but resets daily)
+  // Load stored offset for *today* ("Next" persists for the day, resets daily)
   useEffect(() => {
     let stored: StoredState | null = null;
     try {
@@ -34,18 +34,16 @@ const DailyCodeInsightCard: React.FC = () => {
     } catch {
       stored = null;
     }
+
     if (stored && stored.dateKey === todayKey) {
       setOffset(Math.max(0, Math.floor(stored.offset)));
       return;
     }
-    // reset for a new day
+
     try {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({ dateKey: todayKey, offset: 0 } satisfies StoredState)
-      );
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ dateKey: todayKey, offset: 0 } satisfies StoredState));
     } catch {
-      // ignore storage failures (some webviews block it)
+      // ignore
     }
     setOffset(0);
   }, [todayKey]);
@@ -63,53 +61,62 @@ const DailyCodeInsightCard: React.FC = () => {
   const { insight, index } = useMemo(() => getInsightFor(todayKey, offset), [todayKey, offset]);
 
   const handleNext = (e?: React.MouseEvent) => {
-    // Defensive: ensure no parent click handler ever steals focus/tap.
     if (e) e.stopPropagation();
     setOffset((v) => (v + 1) % Math.max(1, CODE_INSIGHTS_COUNT));
   };
 
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 relative overflow-hidden">
-      {/* Decorative glow (never capture clicks) */}
-      <div className="pointer-events-none absolute -right-4 -top-4 bg-teal-500/10 h-24 w-24 rounded-full blur-xl z-0"></div>
+    <div className="relative overflow-hidden rounded-3xl p-[1px] bg-gradient-to-r from-sky-500/45 via-slate-600/10 to-orange-500/45 shadow-[0_18px_50px_-28px_rgba(0,0,0,0.85)]">
+      <div className="relative overflow-hidden rounded-3xl border border-slate-700/45 bg-slate-900/45 backdrop-blur-xl p-4">
+        {/* Edge glows */}
+        <div className="pointer-events-none absolute -left-16 -bottom-14 h-52 w-52 rounded-full bg-sky-500/10 blur-3xl" />
+        <div className="pointer-events-none absolute -right-14 -bottom-16 h-56 w-56 rounded-full bg-orange-500/10 blur-3xl" />
+        <div className="pointer-events-none absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.10)_1px,transparent_0)] [background-size:26px_26px]" />
 
-      <div className="relative z-10 flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h4 className="text-teal-400 text-xs font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
-            <CheckCircle2 className="h-3.5 w-3.5" />
-            Daily Code Insight
-          </h4>
-          <div className="text-[11px] text-slate-400">
-            <span className="text-slate-200 font-semibold">{insight.standard}</span>
-            <span className="mx-2 text-slate-600">•</span>
-            <span className="text-slate-300">Edition:</span> {insight.edition}
+        <div className="relative z-10 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="h-8 w-8 rounded-xl bg-orange-500/15 border border-orange-500/25 flex items-center justify-center">
+              <FileText className="h-4 w-4 text-orange-300" />
+            </div>
+            <div className="text-lg font-semibold text-orange-200">Daily Code Insight</div>
           </div>
-          <div className="text-[11px] text-slate-500 mt-0.5">
-            Reference: <span className="text-slate-400">{insight.reference}</span>
-          </div>
-          <div className="text-[10px] text-slate-600 mt-1">
-            #{index + 1} of {CODE_INSIGHTS_COUNT}
+
+          {/* top-right "2 of 7 >" */}
+          <div className="shrink-0 flex items-center gap-1 text-xs text-slate-300/80">
+            <span className="tabular-nums">{index + 1}</span>
+            <span className="text-slate-500">of</span>
+            <span className="tabular-nums">{CODE_INSIGHTS_COUNT}</span>
+            <ChevronRight className="h-4 w-4 text-slate-300/60" />
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={handleNext}
-          className="shrink-0 inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-slate-900/50 border border-slate-700/70 text-slate-200 hover:bg-slate-900/70 active:bg-slate-900 transition-colors"
-          aria-label="Next daily code insight"
-          title="Next daily code insight"
-        >
-          Next
-          <ChevronRight className="h-4 w-4 text-slate-400" />
-        </button>
-      </div>
+        <div className="relative z-10 mt-3 text-slate-200">
+          <div className="text-sm font-semibold">
+            {insight.standard} <span className="text-slate-400 font-normal">({insight.edition})</span>{' '}
+            <span className="text-slate-500 font-normal">Reference</span>{' '}
+            <span className="text-slate-400 font-normal">{insight.reference}</span>
+          </div>
 
-      <p className="text-slate-300 text-sm leading-relaxed mt-3">
-        {insight.insight}
-      </p>
+          <div className="mt-2 text-sm leading-relaxed text-slate-200/90">
+            <span className="mr-2">•</span>
+            {insight.insight}
+          </div>
+        </div>
 
-      <div className="mt-3 text-[11px] text-slate-500">
-        Tip: Tap <span className="text-slate-300 font-semibold">Next</span> for another insight (resets daily).
+        <div className="relative z-10 mt-4 flex items-center justify-between">
+          <div className="text-[11px] text-slate-500">Updates daily • Works offline</div>
+
+          <button
+            type="button"
+            onClick={handleNext}
+            className="inline-flex items-center gap-2 rounded-2xl bg-slate-800/50 border border-slate-700/60 px-4 py-2 text-sm text-slate-200 shadow-sm active:scale-[0.98]"
+            aria-label="Next daily code insight"
+            title="Next"
+          >
+            Next
+            <ChevronRight className="h-5 w-5 text-slate-300/70" />
+          </button>
+        </div>
       </div>
     </div>
   );
