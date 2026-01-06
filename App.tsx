@@ -199,11 +199,17 @@ const handleClearHistory = async () => {
     );
   };
 
+  const showGlobalHeader = state.step !== 'results' && activeTab !== 'history' && activeTab !== 'home';
+
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-50 font-sans selection:bg-orange-500/30">
+    <div className="min-h-screen bg-transparent text-slate-50 font-sans selection:bg-orange-500/30">
       
       {/* Header - Only show on Home or specific views */}
-      {state.step !== 'results' && activeTab !== 'history' && (
+      {/*
+        The Home screen has its own "Home" header (to match the app UI mock),
+        so we hide the global header there.
+      */}
+      {showGlobalHeader && (
         <header className="fixed top-0 w-full z-30 bg-slate-900/90 backdrop-blur-md border-b border-slate-800/60 transition-all duration-300">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
@@ -229,7 +235,7 @@ const handleClearHistory = async () => {
       )}
 
       {/* Main Content Area */}
-      <main className="pt-16 relative min-h-screen flex flex-col">
+      <main className={`${showGlobalHeader ? 'pt-16' : 'pt-0'} relative min-h-screen flex flex-col`}>
         {state.error && (
           <div className="max-w-md mx-auto w-full px-4 mt-4 mb-2">
             <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-red-200 text-sm text-center">
