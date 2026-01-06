@@ -1,10 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    "./index.html",
-    "./**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
-    "./services/**/*.{js,ts,jsx,tsx}",
+    './index.html',
+    './App.tsx',
+    './index.tsx',
+    './components/**/*.{ts,tsx}',
+    './services/**/*.{ts,tsx}',
   ],
   theme: {
     extend: {
@@ -18,9 +19,9 @@ export default {
         },
       },
       padding: {
-        'safe': 'env(safe-area-inset-bottom)',
+        safe: 'env(safe-area-inset-bottom)',
       },
     },
   },
   plugins: [],
-}
+};
