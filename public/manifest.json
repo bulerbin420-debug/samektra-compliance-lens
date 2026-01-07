@@ -74,7 +74,12 @@
     }
   ],
   "dir": "ltr",
-  "display_override": ["standalone", "minimal-ui", "browser"],
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui",
+    "browser"
+  ],
   "related_applications": [
     {
       "platform": "play",
