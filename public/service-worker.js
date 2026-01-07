@@ -1,6 +1,6 @@
 // Bump this version whenever you change caching behavior or update core PWA files
 // (manifest, icons, screenshots, app shell, etc.) so clients reliably receive updates.
-const CACHE_NAME = 'samektra-lens-v13';
+const CACHE_NAME = 'samektra-lens-v20';
 
 // Make SW work from site root OR a subfolder (GitHub Pages / PWABuilder / TWA)
 const SCOPE_URL = (self.registration && self.registration.scope) ? self.registration.scope : self.location.origin + '/';

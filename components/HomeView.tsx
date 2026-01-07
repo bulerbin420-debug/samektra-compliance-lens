@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { HistoryItem } from '../types';
 import DailyCodeInsightCard from './DailyCodeInsightCard';
+import WhatsNewModal from './WhatsNewModal';
 
 interface HomeViewProps {
   onNavigate: (tab: string) => void;
@@ -22,6 +23,7 @@ interface HomeViewProps {
 
 const HomeView: React.FC<HomeViewProps> = ({ onNavigate, history, onSelectHistory, installPrompt, onInstall }) => {
   const [isOnline, setIsOnline] = useState<boolean>(typeof navigator !== 'undefined' ? navigator.onLine : true);
+  const [showWhatsNew, setShowWhatsNew] = useState(false);
 
   useEffect(() => {
     const onOnline = () => setIsOnline(true);
@@ -36,6 +38,16 @@ const HomeView: React.FC<HomeViewProps> = ({ onNavigate, history, onSelectHistor
 
   const baseUrl = (import.meta as any).env?.BASE_URL ?? './';
   const appIconUrl = `${baseUrl}icons/icon-192.png`;
+
+  // Keep a single source of truth for the visible app version label.
+  // (Also bump package.json version when you cut a release.)
+  const versionLabel = 'v2.0.0';
+  const whatsNewUpdates = [
+    'New “About / What’s New” pop-up from the info icon on Home.',
+    'Improved history experience (reset flow + stability).',
+    'PWA polish for store readiness and cleaner offline behavior.',
+    'UI refinements and small performance improvements.'
+  ];
 
   const formatWhen = (ts: number) => {
     const diffMs = Date.now() - ts;
@@ -83,10 +95,18 @@ const HomeView: React.FC<HomeViewProps> = ({ onNavigate, history, onSelectHistor
             className="h-11 w-11 rounded-full border border-slate-700/60 bg-slate-900/40 backdrop-blur-md flex items-center justify-center text-slate-200 active:scale-[0.98]"
             aria-label="About"
             title="About"
+            onClick={() => setShowWhatsNew(true)}
           >
             <Info className="h-5 w-5" />
           </button>
         </div>
+
+        <WhatsNewModal
+          isOpen={showWhatsNew}
+          versionLabel={versionLabel}
+          updates={whatsNewUpdates}
+          onClose={() => setShowWhatsNew(false)}
+        />
 
         {/* Hero card (Same look as the reference mock) */}
         <div className="relative overflow-hidden rounded-3xl p-[1px] bg-gradient-to-r from-sky-500/55 via-slate-600/10 to-orange-500/55 shadow-[0_18px_50px_-22px_rgba(0,0,0,0.85)]">

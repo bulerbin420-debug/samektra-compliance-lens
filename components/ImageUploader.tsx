@@ -185,7 +185,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected }) => {
       </div>
       
       <p className="text-center text-xs text-slate-600 mt-8">
-        Samektra Compliance Lens v1.1 • Optimized for Mobile
+        Samektra Compliance Lens v2.0.0 • Optimized for Mobile
       </p>
     </div>
   );
