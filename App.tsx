@@ -20,44 +20,15 @@ const App: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState('home');
   const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [installPrompt, setInstallPrompt] = useState<any>(null);
 
-  // Load history on mount and listen for PWA install prompt
+  // Load history on mount
   useEffect(() => {
     const loadHistory = async () => {
       const items = await getHistory();
       setHistory(items);
     };
     loadHistory();
-
-    const handleBeforeInstallPrompt = (e: any) => {
-      // Prevent Chrome 67 and earlier from automatically showing the prompt
-      e.preventDefault();
-      // Stash the event so it can be triggered later.
-      setInstallPrompt(e);
-    };
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    };
   }, []);
-
-  const handleInstallClick = () => {
-    if (!installPrompt) return;
-    // Show the install prompt
-    installPrompt.prompt();
-    // Wait for the user to respond to the prompt
-    installPrompt.userChoice.then((choiceResult: any) => {
-      if (choiceResult.outcome === 'accepted') {
-        console.log('User accepted the install prompt');
-      } else {
-        console.log('User dismissed the install prompt');
-      }
-      setInstallPrompt(null);
-    });
-  };
 
   const handleImageSelected = (base64Image: string) => {
     setState(prev => ({ ...prev, image: base64Image, step: 'disclaimer' }));
@@ -136,8 +107,6 @@ const handleClearHistory = async () => {
           onNavigate={handleTabClick} 
           history={history}
           onSelectHistory={handleSelectHistoryItem}
-          installPrompt={installPrompt}
-          onInstall={handleInstallClick}
         />
       );
     }

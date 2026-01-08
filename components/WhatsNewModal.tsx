@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { X } from 'lucide-react';
+import { ExternalLink, X } from 'lucide-react';
 
 interface WhatsNewModalProps {
   isOpen: boolean;
@@ -19,6 +19,10 @@ const WhatsNewModal: React.FC<WhatsNewModalProps> = ({ isOpen, versionLabel, upd
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
+
+  const openSamektra = () => {
+    window.open('https://samektra.com', '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <div
@@ -69,7 +73,16 @@ const WhatsNewModal: React.FC<WhatsNewModalProps> = ({ isOpen, versionLabel, upd
             </ul>
           </div>
 
-          <div className="mt-5 flex justify-end">
+          <div className="mt-5 flex flex-col sm:flex-row gap-3 sm:justify-end">
+            <button
+              type="button"
+              onClick={openSamektra}
+              className="rounded-2xl border border-slate-700/60 bg-slate-900/40 hover:bg-slate-800/50 text-slate-100 font-semibold px-5 py-3 shadow-sm active:scale-[0.99] inline-flex items-center justify-center gap-2"
+            >
+              <ExternalLink className="h-4 w-4" />
+              Samektra.com
+            </button>
+
             <button
               type="button"
               onClick={onClose}

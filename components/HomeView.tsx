@@ -3,8 +3,8 @@ import {
   AlertTriangle,
   ChevronRight,
   Clock,
-  Download,
   FileText,
+  Globe,
   Info,
   Sparkles,
   TrendingUp,
@@ -17,11 +17,9 @@ interface HomeViewProps {
   onNavigate: (tab: string) => void;
   history: HistoryItem[];
   onSelectHistory: (item: HistoryItem) => void;
-  installPrompt?: any;
-  onInstall?: () => void;
 }
 
-const HomeView: React.FC<HomeViewProps> = ({ onNavigate, history, onSelectHistory, installPrompt, onInstall }) => {
+const HomeView: React.FC<HomeViewProps> = ({ onNavigate, history, onSelectHistory }) => {
   const [isOnline, setIsOnline] = useState<boolean>(typeof navigator !== 'undefined' ? navigator.onLine : true);
   const [showWhatsNew, setShowWhatsNew] = useState(false);
 
@@ -38,6 +36,11 @@ const HomeView: React.FC<HomeViewProps> = ({ onNavigate, history, onSelectHistor
 
   const baseUrl = (import.meta as any).env?.BASE_URL ?? './';
   const appIconUrl = `${baseUrl}icons/icon-192.png`;
+
+  const openSamektra = () => {
+    // Open in a new tab / external browser. (In Android TWA, this will open outside the app.)
+    window.open('https://samektra.com', '_blank', 'noopener,noreferrer');
+  };
 
   // Keep a single source of truth for the visible app version label.
   // (Also bump package.json version when you cut a release.)
@@ -90,15 +93,28 @@ const HomeView: React.FC<HomeViewProps> = ({ onNavigate, history, onSelectHistor
         {/* Top bar (matches mock UI) */}
         <div className="flex items-center justify-between pt-1">
           <h2 className="text-4xl font-light tracking-tight text-slate-100">Home</h2>
-          <button
-            type="button"
-            className="h-11 w-11 rounded-full border border-slate-700/60 bg-slate-900/40 backdrop-blur-md flex items-center justify-center text-slate-200 active:scale-[0.98]"
-            aria-label="About"
-            title="About"
-            onClick={() => setShowWhatsNew(true)}
-          >
-            <Info className="h-5 w-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Recommended placement: next to the info icon on the Home top bar (always visible, not intrusive). */}
+            <button
+              type="button"
+              className="h-11 w-11 rounded-full border border-slate-700/60 bg-slate-900/40 backdrop-blur-md flex items-center justify-center text-slate-200 active:scale-[0.98]"
+              aria-label="Open Samektra.com"
+              title="Samektra.com"
+              onClick={openSamektra}
+            >
+              <Globe className="h-5 w-5" />
+            </button>
+
+            <button
+              type="button"
+              className="h-11 w-11 rounded-full border border-slate-700/60 bg-slate-900/40 backdrop-blur-md flex items-center justify-center text-slate-200 active:scale-[0.98]"
+              aria-label="About"
+              title="About"
+              onClick={() => setShowWhatsNew(true)}
+            >
+              <Info className="h-5 w-5" />
+            </button>
+          </div>
         </div>
 
         <WhatsNewModal
@@ -135,29 +151,6 @@ const HomeView: React.FC<HomeViewProps> = ({ onNavigate, history, onSelectHistor
                 </div>
               </div>
             </div>
-
-            {/* Install prompt (kept, styled compact) */}
-            {installPrompt && (
-              <button
-                onClick={onInstall}
-                className="relative z-10 mt-4 w-full rounded-2xl border border-teal-500/35 bg-teal-500/10 px-4 py-3 text-left transition-all active:scale-[0.99]"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-xl bg-teal-500 p-2 shadow-sm shadow-teal-500/20">
-                      <Download className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-white">Install for Offline Use</div>
-                      <div className="text-xs text-teal-200">Add to Home Screen</div>
-                    </div>
-                  </div>
-                  <div className="inline-flex items-center rounded-full bg-teal-600 px-3 py-1.5 text-xs font-extrabold text-white">
-                    Install
-                  </div>
-                </div>
-              </button>
-            )}
 
             {/* Quick actions (exact feel: orange left, blue right) */}
             <div className="relative z-10 mt-4 grid grid-cols-2 gap-4">
