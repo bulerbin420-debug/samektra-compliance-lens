@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { CURRENT_VERSION } from '../changelog';
 import { Camera, Upload, Image as ImageIcon, Loader2 } from 'lucide-react';
 
 interface ImageUploaderProps {
@@ -185,7 +186,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected }) => {
       </div>
       
       <p className="text-center text-xs text-slate-600 mt-8">
-        Samektra Compliance Lens v2.0.0 • Optimized for Mobile
+        {`Samektra Compliance Lens v${CURRENT_VERSION} • Optimized for Mobile`}
       </p>
     </div>
   );

@@ -10,6 +10,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { HistoryItem } from '../types';
+import { CURRENT_VERSION } from '../changelog';
 import DailyCodeInsightCard from './DailyCodeInsightCard';
 import WhatsNewModal from './WhatsNewModal';
 
@@ -34,6 +35,20 @@ const HomeView: React.FC<HomeViewProps> = ({ onNavigate, history, onSelectHistor
     };
   }, []);
 
+  useEffect(() => {
+    // Show "What's New" automatically once after each version update.
+    try {
+      const key = 'samektra_last_seen_version';
+      const lastSeen = localStorage.getItem(key);
+      if (lastSeen !== CURRENT_VERSION) {
+        setShowWhatsNew(true);
+        localStorage.setItem(key, CURRENT_VERSION);
+      }
+    } catch {
+      // Ignore storage errors (private mode / blocked storage)
+    }
+  }, []);
+
   const baseUrl = (import.meta as any).env?.BASE_URL ?? './';
   const appIconUrl = `${baseUrl}icons/icon-192.png`;
 
@@ -41,16 +56,6 @@ const HomeView: React.FC<HomeViewProps> = ({ onNavigate, history, onSelectHistor
     // Open in a new tab / external browser. (In Android TWA, this will open outside the app.)
     window.open('https://samektra.com', '_blank', 'noopener,noreferrer');
   };
-
-  // Keep a single source of truth for the visible app version label.
-  // (Also bump package.json version when you cut a release.)
-  const versionLabel = 'v2.0.0';
-  const whatsNewUpdates = [
-    'New “About / What’s New” pop-up from the info icon on Home.',
-    'Improved history experience (reset flow + stability).',
-    'PWA polish for store readiness and cleaner offline behavior.',
-    'UI refinements and small performance improvements.'
-  ];
 
   const formatWhen = (ts: number) => {
     const diffMs = Date.now() - ts;
@@ -119,8 +124,6 @@ const HomeView: React.FC<HomeViewProps> = ({ onNavigate, history, onSelectHistor
 
         <WhatsNewModal
           isOpen={showWhatsNew}
-          versionLabel={versionLabel}
-          updates={whatsNewUpdates}
           onClose={() => setShowWhatsNew(false)}
         />
 
