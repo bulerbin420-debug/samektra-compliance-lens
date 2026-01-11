@@ -1,0 +1,7 @@
+{
+  "name": "Samektra Compliance Lens",
+  "description": "AI-powered compliance inspection tool for NFPA, IBC, NEC, and more.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

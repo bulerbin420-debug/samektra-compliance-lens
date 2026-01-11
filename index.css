@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* App background (starfield + Samektra glow) */
+html, body {
+  height: 100%;
+}
+
+body {
+  /* Base gradient */
+  background:
+    radial-gradient(1200px 800px at 20% 10%, rgba(56, 189, 248, 0.12), transparent 60%),
+    radial-gradient(900px 700px at 85% 20%, rgba(249, 115, 22, 0.12), transparent 55%),
+    radial-gradient(900px 900px at 50% 80%, rgba(20, 184, 166, 0.10), transparent 60%),
+    linear-gradient(180deg, #0b1220 0%, #060a12 100%);
+
+  /* Star speckles */
+  background-blend-mode: screen, screen, screen, normal;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,0.16) 1px, transparent 0),
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,0.10) 1px, transparent 0);
+  background-size: 22px 22px, 38px 38px;
+  background-position: 0 0, 10px 16px;
+  filter: blur(0.2px);
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: -40px;
+  pointer-events: none;
+  opacity: 0.18;
+  background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.08), transparent 65%);
+  filter: blur(30px);
+  z-index: 0;
+}
+
+/* IOS Safe Area support */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
