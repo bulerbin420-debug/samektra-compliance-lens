@@ -12,11 +12,6 @@
       "source": "/manifest.json",
       "destination": "/manifest.json"
     },
-    
-    {
-      "rewrites": [{ "source": "/(.*)", "destination": "/" }]
-    },
-
     {
       "source": "/(.*)",
       "destination": "/index.html"
